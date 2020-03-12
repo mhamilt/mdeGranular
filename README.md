@@ -53,7 +53,7 @@ The `maxmspsdk.xcconfig` in the `xcode` sets a couple of global paths in the xco
 
 ### Current Issues
 
-- [ ] 'QuickTime/QuickTime.h' file not found
+- [x] 'QuickTime/QuickTime.h' file not found
 
     Building Max 7 externals on macOS 10.12 and later may result in the above error. QuickTime frame work has been deprecated so a macOS 10.11 sdk has been included in the repo for ease.
 
