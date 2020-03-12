@@ -56,7 +56,7 @@
 #define inline inline
 #endif
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** To ensure floating point size compatibility, the portable algorithm will
  *  use mdefloat as its floating point type, which is here typedefd to be the
@@ -73,14 +73,14 @@ typedef t_float mdefloat;
 typedef double mdefloat;
 #endif
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** Enumeration for holding the status of the granulator and the grains. */
 typedef enum
 { OFF, ON, STARTING, STOPPING, ACTIVE, INACTIVE, SKIPGRAIN }
 t_status;
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** the maximum number of transpositions the granulator can handle */
 #define MAXTRANSPOSITIONS 256
@@ -95,7 +95,7 @@ t_status;
 /* to suppress warnings about unused arguments */
 #define UNUSED(x) (void)(x)
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 /** @struct:
  */
 typedef struct _mdeGranularGrain
@@ -140,7 +140,7 @@ typedef struct _mdeGranularGrain
   long firstDelayCounter;
 } mdeGranularGrain;
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** @struct:
  * Wrapper structure to hold the grain voices and other data relating
@@ -368,7 +368,6 @@ void makeRamps(int rampLen, mdefloat* rampUp, mdefloat* rampDown);
 /// @param number <#number description#>
 /// @param maxDeviation <#maxDeviation description#>
 mdefloat randomlyDeviate(mdefloat number, mdefloat maxDeviation);
-/*   */
 //// 4-point interpolating table lookup nicked and modified from pd's d_array.c (tabread4~)
 /// @updated: MDE Thu Feb 20 11:39:46 2020 -- 'live' arg doesn't seem to be used at all, so
 /// removing
@@ -744,6 +743,6 @@ void mdeGranular_tildePortionWidth(t_mdeGranular_tilde *x, mdefloat width);
 void mdeGranular_tildeBufferGrainRamp(t_mdeGranular_tilde *x, t_symbol *s,
                                       mdefloat grain_len, mdefloat ramp_len);
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /* EOF mdeGranular~.h */
