@@ -2,14 +2,14 @@
  *
  * File:             mdeGranular~maxmsp.c
  *
- * Author:           Michael Edwards - m@michael-edwards.org - 
+ * Author:           Michael Edwards - m@michael-edwards.org -
  *                   http://www.michael-edwards.org
  *
  * Date:             June 13th 2003
  *
  * $$ Last modified:  19:16:22 Thu Feb 27 2020 CET
  *
- * Purpose:          MAX/MSP interface to the external for multi-channel, 
+ * Purpose:          MAX/MSP interface to the external for multi-channel,
  *                   multi-voice, multi-transposition granular synthesis.
  *
  * License:          Copyright (c) 2003 Michael Edwards
@@ -56,7 +56,7 @@ void* mdeGranular_tildeClass;
 /** This is called second, after main  */
 
 void* mdeGranular_tildeNew(long maxVoices, long numChannels)
-{  
+{
   t_mdeGranular_tilde* x =
     (t_mdeGranular_tilde *)object_alloc(mdeGranular_tildeClass);
   int i;
@@ -82,10 +82,10 @@ void* mdeGranular_tildeNew(long maxVoices, long numChannels)
   floatin(x, 4); /* start point in buffer in millisecs */
   floatin(x, 5); /* grain length deviation in percentage of the grain length */
   floatin(x, 6); /* grain length in milliseconds */
-  floatin(x, 7); /* transposition offset in semitones */ 
+  floatin(x, 7); /* transposition offset in semitones */
   /* x->x_arrayname = buffer; */
   /* this ensures that a 1000ms buffer will be allocated when the DSP
-   * method is called */  
+   * method is called */
   x->x_arrayname = gensym("ms1000");
   x->x_liverunning = 1;
   /* 2/4/08: no longer pass ramp len and srate here as they're now
@@ -95,15 +95,14 @@ void* mdeGranular_tildeNew(long maxVoices, long numChannels)
   for (i = 0; i < (int)numChannels; i++)
     outlet_new((t_object*)x, "signal");
   /* MDE Thu Sep 19 10:41:07 2013 -- do this here now as srate is always
-   * available */  
-  g->samplingRate = sys_getsr(); 
+   * available */
+  g->samplingRate = sys_getsr();
   mdeGranularInit2(g, sys_getblksize(), (mdefloat)DEFAULT_RAMP_LEN,
                    (mdefloat**)0x0);
   mdeGranular_tildeSet(x, x->x_arrayname);
   /* post("gl %f", x->x_g.grainLengthMS); */
   return (x);
 }
-
 /*****************************************************************************/
 
 /** This is the function called by MAX/MSP when the cursor is over an inlet or
@@ -119,8 +118,9 @@ void mdeGranular_tildeAssist(t_mdeGranular_tilde *x, void *box, long message,
 {
   if (message == 2)
     sprintf(dstString, "(signal) granulated output");
-  else {
-    switch (arg) {    
+  else
+  {
+    switch (arg) {
     case 0:
       sprintf(dstString, "(bang/list/message) bang starts granulation...");
       break;
@@ -149,7 +149,6 @@ void mdeGranular_tildeAssist(t_mdeGranular_tilde *x, void *box, long message,
     }
   }
 }
-
 /*****************************************************************************/
 
 /** Turns on granulating of the live input. */
@@ -158,7 +157,6 @@ void mdeGranular_tildeLivestart(t_mdeGranular_tilde *x)
 {
   x->x_liverunning = 1;
 }
-
 /*****************************************************************************/
 
 /** Turns off granulating of the live input thus leaving the buffer with what's
@@ -168,7 +166,6 @@ void mdeGranular_tildeLivestop(t_mdeGranular_tilde *x)
 {
   x->x_liverunning = 0;
 }
-
 /*****************************************************************************/
 
 /** Print the state of the mdeGranulator object's inner variables. */
@@ -178,7 +175,6 @@ void mdeGranular_tildePrint(t_mdeGranular_tilde *x)
   mdeGranularPrint(&x->x_g);
   post("x_liverunning = %d", x->x_liverunning);
 }
-
 /*****************************************************************************/
 
 /** This gets called when you send the object a set message with the name of
@@ -199,19 +195,23 @@ void mdeGranular_tildeSet(t_mdeGranular_tilde *x, t_symbol *s)
   long copied;
 
   /* MDE Thu Sep 19 10:39:17 2013 -- in case it's changed, might as well update
-   */ 
+   */
   g->samplingRate = srate;
   strncpy(g->BufferName, s->s_name, sizeof(g->BufferName));
   /* post("%s", g->BufferName); */
-  if ((got_ms && isanum((char*)(s->s_name + 2))) || isanum((char*)s->s_name)) {
+  if ((got_ms && isanum((char*)(s->s_name + 2))) || isanum((char*)s->s_name))
+  {
     /* we got a millisecond buffer size e.g. "ms1000" for live input */
     mdefloat bufsize = atof((char*)(s->s_name + (got_ms ? 2 : 0)));
     mdeGranular_tildeSetF(x, bufsize);
   }
-  else { /* static buffer */
+  else/* static buffer */
+  {
     x->x_arrayname = s;
-    if ((bobj = (t_buffer_obj *)(s->s_thing)) && ob_sym(bobj) == ps_buffer) {
-      if ((buffer_getchannelcount(bobj) != 1) && g->warnings) {
+    if ((bobj = (t_buffer_obj *)(s->s_thing)) && ob_sym(bobj) == ps_buffer)
+    {
+      if ((buffer_getchannelcount(bobj) != 1) && g->warnings)
+      {
         post("mdeGranular~: Only mono buffers allowed: %s", s->s_name);
         return;
       }
@@ -219,28 +219,28 @@ void mdeGranular_tildeSet(t_mdeGranular_tilde *x, t_symbol *s)
       samples = buffer_locksamples(bobj);
       copied = mdeGranularCopyFloatSamples(g, samples, nsamples);
       mdegranular_tildeUnlockBuffer(bref);
-      if (!samples || 
+      if (!samples ||
           mdeGranularInit3(g, g->theSamples, samples2ms(srate, nsamples), copied)
           < 0)
         post("mdeGranular~: couldn't init Granular object");
     }
-    else {
+    else
+    {
       if (g->warnings)
         post("mdeGranular~: %s: no such array", s->s_name);
       samples = NULL;
     }
   }
 }
-
 /*****************************************************************************/
 void mdegranular_tildeUnlockBuffer(t_buffer_ref* buf)
 {
-  if (buf) {
+  if (buf)
+  {
     buffer_unlocksamples(buffer_ref_getobject(buf));
     object_free(buf);
   }
 }
-
 /*****************************************************************************/
 
 /** This is called every 64 samples or whatever the tick size is.
@@ -248,38 +248,38 @@ void mdegranular_tildeUnlockBuffer(t_buffer_ref* buf)
 
 void mspExternalPerform(t_mdeGranular_tilde* x, t_object* dsp64, double** ins,
                         long numins, double** outs, long numouts,
-                        long sampleframes, long flags, void* userparam)  
+                        long sampleframes, long flags, void* userparam)
 
 {
   mdefloat* in = (mdefloat*)ins[0];
   mdeGranular* g = &x->x_g;
   int i;
 
-  for (i = 0; i < g->numChannels; ++i) {
+  for (i = 0; i < g->numChannels; ++i)
+  {
     g->channelBuffers[i] = (mdefloat*)outs[i];
-    /* post("%ld", g->channelBuffers[i]); */        
+    /* post("%ld", g->channelBuffers[i]); */
   }
   if (g->live && x->x_liverunning && g->status)
     mdeGranularCopyInputSamples(g, in, sampleframes);
 
 #ifdef DEBUG
   if (DebugFP)
-    fprintf(DebugFP, "\n\nPerform\n\n");  
+    fprintf(DebugFP, "\n\nPerform\n\n");
 #endif
 
   mdeGranularGo(g);
   /*
-    post("toffset %f", x->x_g.transpositionOffsetST);
-    post("glen %f", x->x_g.grainLengthMS);
-    post("glenDev %f", x->x_g.grainLengthDeviation);
-    post("start %f", x->x_g.samplesStartMS);
-    post("end %f", x->x_g.samplesEndMS);
-    post("ramplen %f", x->x_g.rampLenMS);
-    post("density %f", x->x_g.density);
-    post("gamp %f", x->x_g.grainAmp);
-  */
+     post("toffset %f", x->x_g.transpositionOffsetST);
+     post("glen %f", x->x_g.grainLengthMS);
+     post("glenDev %f", x->x_g.grainLengthDeviation);
+     post("start %f", x->x_g.samplesStartMS);
+     post("end %f", x->x_g.samplesEndMS);
+     post("ramplen %f", x->x_g.rampLenMS);
+     post("density %f", x->x_g.density);
+     post("gamp %f", x->x_g.grainAmp);
+   */
 }
-
 /*****************************************************************************/
 
 /** This gets called third, when the audio engine starts (after _new!). */
@@ -289,7 +289,6 @@ void mdeGranular_tildeDSP(t_mdeGranular_tilde* x, t_object* dsp64, short* count,
 {
   object_method(dsp64, gensym("dsp_add64"), x, mspExternalPerform, 0, NULL);
 }
-
 /*****************************************************************************/
 
 /** This gets called when we receive a bang */
@@ -303,7 +302,6 @@ void mdeGranular_tildeBang(t_mdeGranular_tilde *x)
   else if (mdeGranularIsOff(g))
     mdeGranularOn(g);
 }
-
 /*****************************************************************************/
 
 /** this gets called when a list is sent to the object */
@@ -319,7 +317,6 @@ void mdeGranular_tildeList(t_mdeGranular_tilde *x, t_symbol *s,
     semitones[i] = atom_getfloatarg(i, argc, argv);
   mdeGranularSetTranspositions(&x->x_g, argc, semitones);
 }
-
 /*****************************************************************************/
 
 void mdeGranular_tildeFree(t_mdeGranular_tilde *x)
@@ -329,7 +326,6 @@ void mdeGranular_tildeFree(t_mdeGranular_tilde *x)
   mdeGranularFree(g);
   dsp_free((t_pxobject*)x);
 }
-
 /*****************************************************************************/
 
 /* This method is called first. */
@@ -354,7 +350,7 @@ int C74_EXPORT main(void)
   class_addmethod(c, (method)mdeGranular_tildeDensity, "ft2", A_FLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeGrainAmp, "ft1", A_FLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeBang, "bang", 0); /* start/stop */
-  class_addmethod(c, (method)mdeGranular_tildeList, "list", 
+  class_addmethod(c, (method)mdeGranular_tildeList, "list",
                   A_GIMME, 0); /* transpositions */
   class_addmethod(c, (method)mdeGranular_tildeLivestart, "livestart", 0);
   class_addmethod(c, (method)mdeGranular_tildeLivestop, "livestop", 0);
@@ -367,11 +363,11 @@ int C74_EXPORT main(void)
                   A_DEFFLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeMaxVoices, "MaxVoices",
                   A_DEFFLOAT, 0);
-  class_addmethod(c, (method)mdeGranular_tildeActiveVoices, "ActiveVoices", 
+  class_addmethod(c, (method)mdeGranular_tildeActiveVoices, "ActiveVoices",
                   A_DEFFLOAT, 0);
-  class_addmethod(c, (method)mdeGranular_tildeTranspositionOffsetST, 
+  class_addmethod(c, (method)mdeGranular_tildeTranspositionOffsetST,
                   "TranspositionOffsetST", A_DEFFLOAT, 0);
-  class_addmethod(c, (method)mdeGranular_tildeGrainLengthMS, "GrainLengthMS", 
+  class_addmethod(c, (method)mdeGranular_tildeGrainLengthMS, "GrainLengthMS",
                   A_DEFFLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeGrainLengthDeviation,
                   "GrainLengthDeviation", A_DEFFLOAT, 0);
@@ -383,7 +379,7 @@ int C74_EXPORT main(void)
                   0);
   class_addmethod(c, (method)mdeGranular_tildeGrainAmp, "GrainAmp", A_DEFFLOAT,
                   0);
-  class_addmethod(c, (method)mdeGranular_tildeActiveChannels, "ActiveChannels", 
+  class_addmethod(c, (method)mdeGranular_tildeActiveChannels, "ActiveChannels",
                   A_DEFLONG, 0);
   class_addmethod(c, (method)mdeGranular_tildeAssist,"assist", A_CANT,0);
   class_addmethod(c, (method)mdeGranular_tildeDSP, "dsp64", A_CANT, 0);
@@ -392,7 +388,7 @@ int C74_EXPORT main(void)
   class_addmethod(c, (method)mdeGranular_tildeDoGrainDelays, "DoGrainDelays",
                   0);
   class_addmethod(c, (method)mdeGranular_tildeSmoothMode, "SmoothMode", 0);
-  class_addmethod(c, (method)mdeGranular_tildeSetLiveBufferSize, 
+  class_addmethod(c, (method)mdeGranular_tildeSetLiveBufferSize,
                   "MaxLiveBufferMS",  A_DEFFLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeOctaveSize, "OctaveSize",
                   A_DEFFLOAT, 0);
@@ -400,11 +396,11 @@ int C74_EXPORT main(void)
                   "OctaveDivisions", A_DEFFLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeWarnings, "Warnings", A_DEFLONG,
                   0);
-  class_addmethod(c, (method)mdeGranular_tildePortion, "Portion", A_DEFFLOAT, 
+  class_addmethod(c, (method)mdeGranular_tildePortion, "Portion", A_DEFFLOAT,
                   A_DEFFLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildePortionPosition,
                   "PortionPosition", A_DEFFLOAT, 0);
-  class_addmethod(c, (method)mdeGranular_tildePortionWidth, "PortionWidth", 
+  class_addmethod(c, (method)mdeGranular_tildePortionWidth, "PortionWidth",
                   A_DEFFLOAT, 0);
   class_addmethod(c, (method)mdeGranular_tildeBufferGrainRamp,
                   "BufferGrainRamp", A_DEFSYM, A_DEFFLOAT, A_DEFFLOAT, 0);
@@ -414,7 +410,6 @@ int C74_EXPORT main(void)
   mdeGranularWelcome();
   return 0;
 }
-
 /*****************************************************************************/
 
 #endif /* MAXMSP */
