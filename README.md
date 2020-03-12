@@ -32,21 +32,33 @@ https://www.michael-edwards.org
 
 ## Fork Additions
 
-- Added `max-sdk` git submodule. you can change the version of max by [checking out another tagged release](https://stackoverflow.com/a/1778247/8876321)
+- Added `max-sdk` git submodule. You can change the version of max by [checking out another tagged release](https://stackoverflow.com/a/1778247/8876321)
     ```sh
     cd max-sdk
     git checkout v7.0.3 # or v7.1.0 v7.3.3 v8.0.3
     cd ..
     git add max-sdk
-    git commit -m "change max version v1.0"
+    git commit -m "change max version v7.1.0"
     git push
     ```
 - added macOS 10.11 sdk for pre v8.0.0 Max builds
 - add local `maxmspsdk.xcconfig` to improve portability
 
-## Current Issues
+### maxmspsdk.xcconfig
+
+The `maxmspsdk.xcconfig` in the `xcode` sets a couple of global paths in the xcode project. Some of these variables you can change others you should leave alone. The ones to change are
+
+- `PRODUCT_VERSION`: which version of the max sdk are you using?
+- `DSTROOT`: destination of the built external (project relative directory)
+
+### Current Issues
 
 - [ ] 'QuickTime/QuickTime.h' file not found
+
+    Building Max 7 externals on macOS 10.12 and later may result in the above error. QuickTime frame work has been deprecated so a macOS 10.11 sdk has been included in the repo for ease.
+
+    See the following for details
+
     - [Solved: macOS Sierra, Xcode 8, missing quicktime.h](https://sdk.steinberg.net/viewtopic.php?t=229)
     - [macOS sdks](https://github.com/phracker/MacOSX-SDKs)
     - paste `/PATH/TO/MacOSX10.11.sdk` as Base SDK. will say sdk not found but still works
