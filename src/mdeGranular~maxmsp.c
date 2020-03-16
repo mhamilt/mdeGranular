@@ -47,18 +47,17 @@
 
 #ifdef MAXMSP
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 void* mdeGranular_tildeClass;
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** This is called second, after main  */
 
 void* mdeGranular_tildeNew(long maxVoices, long numChannels)
 {
-  t_mdeGranular_tilde* x =
-    (t_mdeGranular_tilde *)object_alloc(mdeGranular_tildeClass);
+  t_mdeGranular_tilde* x = (t_mdeGranular_tilde *)object_alloc(mdeGranular_tildeClass);
   int i;
   mdeGranular* g = &x->x_g;
 
@@ -103,7 +102,7 @@ void* mdeGranular_tildeNew(long maxVoices, long numChannels)
   /* post("gl %f", x->x_g.grainLengthMS); */
   return (x);
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** This is the function called by MAX/MSP when the cursor is over an inlet or
  *  outlet. We can ignore the box arg for now. The message is either 1
@@ -149,7 +148,7 @@ void mdeGranular_tildeAssist(t_mdeGranular_tilde *x, void *box, long message,
     }
   }
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** Turns on granulating of the live input. */
 
@@ -157,7 +156,7 @@ void mdeGranular_tildeLivestart(t_mdeGranular_tilde *x)
 {
   x->x_liverunning = 1;
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** Turns off granulating of the live input thus leaving the buffer with what's
  *  already there (sample and hold). */
@@ -166,7 +165,7 @@ void mdeGranular_tildeLivestop(t_mdeGranular_tilde *x)
 {
   x->x_liverunning = 0;
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** Print the state of the mdeGranulator object's inner variables. */
 
@@ -175,7 +174,7 @@ void mdeGranular_tildePrint(t_mdeGranular_tilde *x)
   mdeGranularPrint(&x->x_g);
   post("x_liverunning = %d", x->x_liverunning);
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** This gets called when you send the object a set message with the name of
  *  the array to granulate. It is also called from mdeGranular_tildeDSP
@@ -232,7 +231,7 @@ void mdeGranular_tildeSet(t_mdeGranular_tilde *x, t_symbol *s)
     }
   }
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 void mdegranular_tildeUnlockBuffer(t_buffer_ref* buf)
 {
   if (buf)
@@ -241,7 +240,7 @@ void mdegranular_tildeUnlockBuffer(t_buffer_ref* buf)
     object_free(buf);
   }
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** This is called every 64 samples or whatever the tick size is.
  *  */
@@ -280,7 +279,7 @@ void mspExternalPerform(t_mdeGranular_tilde* x, t_object* dsp64, double** ins,
      post("gamp %f", x->x_g.grainAmp);
    */
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** This gets called third, when the audio engine starts (after _new!). */
 
@@ -289,7 +288,7 @@ void mdeGranular_tildeDSP(t_mdeGranular_tilde* x, t_object* dsp64, short* count,
 {
   object_method(dsp64, gensym("dsp_add64"), x, mspExternalPerform, 0, NULL);
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** This gets called when we receive a bang */
 
@@ -302,7 +301,7 @@ void mdeGranular_tildeBang(t_mdeGranular_tilde *x)
   else if (mdeGranularIsOff(g))
     mdeGranularOn(g);
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /** this gets called when a list is sent to the object */
 
@@ -317,7 +316,7 @@ void mdeGranular_tildeList(t_mdeGranular_tilde *x, t_symbol *s,
     semitones[i] = atom_getfloatarg(i, argc, argv);
   mdeGranularSetTranspositions(&x->x_g, argc, semitones);
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 void mdeGranular_tildeFree(t_mdeGranular_tilde *x)
 {
@@ -326,7 +325,7 @@ void mdeGranular_tildeFree(t_mdeGranular_tilde *x)
   mdeGranularFree(g);
   dsp_free((t_pxobject*)x);
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /* This method is called first. */
 
@@ -410,10 +409,10 @@ int C74_EXPORT main(void)
   mdeGranularWelcome();
   return 0;
 }
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 #endif /* MAXMSP */
 
-/*****************************************************************************/
+//------------------------------------------------------------------------------
 
 /* EOF mdeGranular~maxmsp.c */
