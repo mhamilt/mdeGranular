@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "58D24BB82449CDBD0062B3A5"
                BuildableName = "mdegranular~.d_fat"
-               BlueprintName = "pd-external-lib"
+               BlueprintName = "pd-external"
                ReferencedContainer = "container:mdegranular~.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "58D24BB82449CDBD0062B3A5"
             BuildableName = "mdegranular~.d_fat"
-            BlueprintName = "pd-external-lib"
+            BlueprintName = "pd-external"
             ReferencedContainer = "container:mdegranular~.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -18,6 +18,8 @@ PRODUCT_VERSION = 7.1.0
 ARCHS = i386 x86_64
 
 
+
+
 // Paths
 C74SUPPORT = ../max-sdk/source/c74support
 HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
