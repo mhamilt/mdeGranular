@@ -1,0 +1,9 @@
+DEPLOYMENT_LOCATION = YES
+DSTROOT = /
+INSTALL_PATH = /Applications/Pd-0.49-1.app/Contents/Resources/extra
+OTHER_LDFLAGS = -undefined dynamic_lookup
+EXECUTABLE_PREFIX =
+EXECUTABLE_EXTENSION = d_fat
+PRODUCT_NAME = mdegranular~
+USER_HEADER_SEARCH_PATHS = /Applications/Pd-0.49-1.app/Contents/Resources/src
+ARCHS = i386 x86_64
