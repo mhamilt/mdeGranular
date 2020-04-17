@@ -7,7 +7,7 @@ lib.name = mdeGranular~
 
 cflags = -Wno-undefined-inline
 
-common.sources = ../src/mdeGranular~.c 
+common.sources = ../src/mdeGranular~.c
 # lib.setup.sources = ../src/mdeGranular~.c
 
 # input source file (class name == source file basename)

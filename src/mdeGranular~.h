@@ -47,6 +47,7 @@
 
 #ifdef PD
 #include "m_pd.h"
+
 #define VERSION "1.2"
 #endif
 
@@ -64,12 +65,13 @@
  *  */
 
 #ifdef PD
-/* Here the t_float is from PD. */
+/// Here the t_float is from PD.
 typedef t_float mdefloat;
 #endif
 #ifdef MAXMSP
-/* MDE Wed Sep 18 18:16:48 2013 -- changing to doubles with dsp64
-   typedef t_float mdefloat; */
+/** MDE Wed Sep 18 18:16:48 2013 -- changing to doubles with dsp64
+   typedef t_float mdefloat;
+ */
 typedef double mdefloat;
 #endif
 
@@ -600,7 +602,6 @@ void mdeGranularWelcome(void);
 /// <#Description#>
 /// @param g <#g description#>
 inline void mdeGranularOff(mdeGranular* g);
-
 /// @updated 1.8.10: Here we set the start/end points in the buffer by passing values in
 /// percentages: the position will set the middle point between start and end,
 /// as determined by width.
@@ -608,7 +609,7 @@ inline void mdeGranularOff(mdeGranular* g);
 /// @param position <#position description#>
 /// @param width <#width description#>
 inline void mdeGranularPortion(mdeGranular* g, mdefloat position,
-                               mdefloat width);
+                            mdefloat width);
 /// <#Description#>
 /// @param x <#x description#>
 /// @param bufsize <#bufsize description#>
@@ -639,6 +640,9 @@ void mdeGranularClearTheSamples(mdeGranular* g);
 /// @param g <#g description#>
 /// @param nsamps <#nsamps description#>
 long mdeGranularCopyFloatSamples(mdeGranular* g, float* in, long nsamps);
+//------------------------------------------------------------------------------
+#pragma mark Inlet methods
+
 /// <#Description#>
 /// @param x <#x description#>
 /// @param s <#s description#>

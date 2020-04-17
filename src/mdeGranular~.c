@@ -63,13 +63,12 @@ static FILE* DebugFP = NULL;
 void mdeGranularSetActiveVoices(mdeGranular* g, mdefloat activeVoices)
 {
   int av = (int)activeVoices;
-  int i;
 
   if (av >= 0 && av <= g->maxVoices)
   {
     g->activeVoices = av;
     if (g->grains)
-      for (i = 0; i < g->maxVoices; ++i)
+      for (int i = 0; i < g->maxVoices; ++i)
       {
         g->grains[i].activeStatus = (i >= av ? INACTIVE : ACTIVE);
         g->grains[i].doDelay = 1;
@@ -253,14 +252,13 @@ void mdeGranularOctaveDivisions(mdeGranular* g, mdefloat divs)
 
 mdefloat maxFloat(mdefloat* array, int size)
 {
-  int i;
   /* MDE Thu Sep 19 19:40:48 2013 -- bear in mind that this used to be FLT_MIN
    * but had to be updated when we switched from 32 to 64 bit floats. Both are
    * defined in float.h */
   mdefloat result = (mdefloat)DBL_MIN;
   mdefloat tmp;
 
-  for (i = 0; i < size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     tmp = *array++;
     if (tmp > result)
@@ -333,10 +331,8 @@ void mdeGranularSetGrainLengthMS(mdeGranular* g, mdefloat f)
 
 void mdeGranularDoGrainDelays(mdeGranular* g)
 {
-  int i;
-
   if (g->grains)
-    for (i = 0; i < g->maxVoices; ++i)
+    for (int i = 0; i < g->maxVoices; ++i)
     {
       g->grains[i].doDelay = 1;
     }
@@ -345,7 +341,6 @@ void mdeGranularDoGrainDelays(mdeGranular* g)
 
 void mdeGranularSmoothMode(mdeGranular* g)
 {
-  int i;
   int av = g->activeVoices;
   int len = g->grainLength;
   int delay = 0;
@@ -361,7 +356,7 @@ void mdeGranularSmoothMode(mdeGranular* g)
     dinc = 2;
   g->grainLengthDeviation = (mdefloat)0.0;
   if (g->grains)
-    for (i = 0; i < av; ++i)
+    for (int i = 0; i < av; ++i)
     {
       g->grains[i].doDelay = delay;
       delay += dinc;
@@ -619,7 +614,6 @@ void mdeGranularSetGrainAmp(mdeGranular* g, mdefloat f)
 
 void mdeGranularSetTranspositions(mdeGranular* g, int num, mdefloat* list)
 {
-  int i;
   mdefloat st;
   mdefloat noTransp[] = { (mdefloat)0.0 };
 
@@ -632,7 +626,7 @@ void mdeGranularSetTranspositions(mdeGranular* g, int num, mdefloat* list)
     list = noTransp;
   }
   g->numTranspositions = num;
-  for (i = 0; i < num && i < MAXTRANSPOSITIONS; ++i)
+  for (int i = 0; i < num && i < MAXTRANSPOSITIONS; ++i)
   {
     st = *list++;
     g->transpositions[i] = st;
@@ -663,12 +657,11 @@ void mdeGranularClearTheSamples(mdeGranular* g)
 
 void mdeGranularForceGrainReinit(mdeGranular* g)
 {
-  int i;
   mdeGranularGrain gg;
 
   if (g->grains)
   {
-    for (i = 0; i < g->maxVoices; ++i)
+    for (int i = 0; i < g->maxVoices; ++i)
     {
       gg = g->grains[i];
       /* doing this will cause mdeGranularGrainExhaused() to return true
@@ -722,13 +715,15 @@ void mdeGranularGrainPrint(mdeGranularGrain* gg)
 
 void mdeGranularPrint(mdeGranular* g)
 {
-  int i;
-
   post("mdeGranular~ data structure info:");
 
-  for (i = 0; i < g->rampLenSamples; ++i)
+  for (int i = 0; i < g->rampLenSamples; ++i)
+  {
     post("i = %d: rampUp = %f, rampDown = %f",
-         i, g->rampUp[i], g->rampDown[i]);
+         i,
+         g->rampUp[i],
+         g->rampDown[i]);
+  }
   /* print the grain amps array */
   /*
      for (i = 0; i < g->nOutputSamples; ++i)
@@ -810,12 +805,12 @@ mdefloat mdeGranularGetGrainAmpAndInc(mdeGranular* g)
 
 void mdeGranularInitGrains(mdeGranular* g)
 {
-  int i;
-
   /* we can't do this until we have the samples! */
   if (g->samples)
-    for (i = 0; i < g->maxVoices; ++i)
+    for (int i = 0; i < g->maxVoices; ++i)
+    {
       mdeGranularGrainInit(&g->grains[i], g, 1);
+    }
 }
 //------------------------------------------------------------------------------
 
@@ -879,7 +874,6 @@ int mdeGranularInit1(mdeGranular* g, int maxVoices, int numChannels)
 int mdeGranularInit2(mdeGranular* g, long nOutputSamples, mdefloat rampLenMS,
                      mdefloat** channelBuffers)
 {
-  int i;
   if (g)
   {
     /* 2/4/08: samplingRate has been set in mdeGranular_tildeDSP before this
@@ -897,8 +891,10 @@ int mdeGranularInit2(mdeGranular* g, long nOutputSamples, mdefloat rampLenMS,
        it this way, Max used to do it this way but now it happens in the perform
        routine */
     if (channelBuffers)
-      for (i = 0; i < g->numChannels; ++i)
+      for (int i = 0; i < g->numChannels; ++i)
+      {
         g->channelBuffers[i] =  channelBuffers[i];
+      }
     /* can't call the inlet method here, have to set it directly */
     if (!mdeGranularDidInit(g))
     {
@@ -1274,8 +1270,6 @@ mdefloat mdeGranularGetAmpForStatus(mdeGranular* g)
 
 void mdeGranularGo(mdeGranular* g)
 {
-  int i;
-  int j;
   mdeGranularGrain* gg;
   mdefloat statusRampVal;
   mdefloat* samp;
@@ -1305,7 +1299,7 @@ void mdeGranularGo(mdeGranular* g)
   {
     if (!(mdeGranularAtTargetGrainAmp(g) && *gamp == g->grainAmp))
     {
-      for (i = 0; i < tickSize; ++i, ++gamp)
+      for (int i = 0; i < tickSize; ++i, ++gamp)
       {
         *gamp = mdeGranularGetGrainAmpAndInc(g);
       }
@@ -1313,22 +1307,23 @@ void mdeGranularGo(mdeGranular* g)
   }
 
   /* zero out the buffers first */
-  for (i = 0; i < g->numChannels; ++i)
+  for (int i = 0; i < g->numChannels; ++i)
+  {
     silence(g->channelBuffers[i], tickSize);
+  }
   if (g->status && g->grains)
   {
-    for (i = 0; i < g->maxVoices; ++i)
+    for (int i = 0; i < g->maxVoices; ++i)
     {
       gg = &g->grains[i];
-      mdeGranularGrainMixIn(gg, g, g->channelBuffers[gg->channel],
-                            tickSize);
+      mdeGranularGrainMixIn(gg, g, g->channelBuffers[gg->channel], tickSize);
     }
     if (g->status == STARTING || g->status == STOPPING)
     {
-      for (i = 0; i < tickSize; ++i)
+      for (int i = 0; i < tickSize; ++i)
       {
         statusRampVal = mdeGranularGetAmpForStatus(g);
-        for (j = 0; j < g->activeChannels; ++j)
+        for (int j = 0; j < g->activeChannels; ++j)
         {
           samp = g->channelBuffers[j] + i;
           *samp *= statusRampVal;
@@ -1347,7 +1342,6 @@ void mdeGranularGrainMixIn(mdeGranularGrain* gg, mdeGranular* parent,
   mdefloat out;
   mdefloat* samples = parent->samples;
   mdefloat inc = gg->inc;
-  int i;
 
 #if 0
   if (gg == NULL)
@@ -1363,7 +1357,7 @@ void mdeGranularGrainMixIn(mdeGranularGrain* gg, mdeGranular* parent,
 
   /* only do it if there are samples to granulate and a buffer to write into */
   if (samples && where)
-    for (i = 0; i < howMany; ++i)
+    for (int i = 0; i < howMany; ++i)
     {
       /* are we in the initial delay part for this grain? */
       if (gg->firstDelayCounter < gg->firstDelay)
@@ -1441,8 +1435,7 @@ void mdeGranularGrainMixIn(mdeGranularGrain* gg, mdeGranular* parent,
 }
 //------------------------------------------------------------------------------
 
-void mdeGranularCopyInputSamples(mdeGranular* g, mdefloat* in,
-                                 long nsamps)
+void mdeGranularCopyInputSamples(mdeGranular* g, mdefloat* in, long nsamps)
 {
   mdefloat* samples = g->theSamples;
   long i;
@@ -1587,10 +1580,9 @@ mdefloat randomlyDeviate(mdefloat number, mdefloat maxDeviation)
 void makeRamps(int rampLen, mdefloat* rampUp, mdefloat* rampDown)
 {
   mdefloat inc = (mdefloat)1.0 / (mdefloat)(rampLen - 1);
-  int i;
   mdefloat f = (mdefloat)0.0;
 
-  for (i = 0; i < rampLen; ++i, f += inc, ++rampUp, ++rampDown)
+  for (int i = 0; i < rampLen; ++i, f += inc, ++rampUp, ++rampDown)
   {
     *rampUp = f;
     *rampDown = 1.0f - f;
